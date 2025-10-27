@@ -36,10 +36,6 @@ public class Asteroid extends Entity {
         sprite.setPosition(x, y);
     }
     
-    public Rectangle getArea() {
-    	return sprite.getBoundingRectangle();
-    }
-    
     @Override
     public void draw(SpriteBatch batch) {
     	sprite.draw(batch);
