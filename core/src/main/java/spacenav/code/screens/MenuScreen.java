@@ -4,19 +4,28 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import spacenav.code.SpaceNavigation;
+import spacenav.code.utils.AssetLoader;
 
 
 public class MenuScreen implements Screen {
 
 	private SpaceNavigation game;
 	private OrthographicCamera camera;
+	private BitmapFont defaultFont;
+	private BitmapFont titleFont;
+	
 
 	public MenuScreen(SpaceNavigation game) {
 		this.game = game;
-        
+		
+		AssetLoader assets = AssetLoader.getInstance();
+		defaultFont = assets.get(AssetLoader.DEFAULT_FONT, BitmapFont.class);
+		titleFont = assets.get(AssetLoader.TITLE_FONT, BitmapFont.class);
+		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1200, 800);
 	}
@@ -29,8 +38,8 @@ public class MenuScreen implements Screen {
 		game.getBatch().setProjectionMatrix(camera.combined);
 
 		game.getBatch().begin();
-		game.getFont().draw(game.getBatch(), "Bienvenido a Space Navigation !", 140, 400);
-		game.getFont().draw(game.getBatch(), "Pincha en cualquier lado o presiona cualquier tecla para comenzar ...", 100, 300);
+		titleFont.draw(game.getBatch(), "SPACE NAVIGATION", 140, 400);
+		defaultFont.draw(game.getBatch(), "Pincha en cualquier lado o presiona cualquier tecla para comenzar ...", 100, 300);
 	
 		game.getBatch().end();
 

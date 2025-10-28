@@ -2,24 +2,29 @@ package spacenav.code;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import spacenav.code.screens.MenuScreen;
+import spacenav.code.utils.AssetLoader;
 
 
 
 
 public class SpaceNavigation extends Game {
 	private SpriteBatch batch;
-	private BitmapFont font;
 	private int highScore;	
+	private AssetLoader assets;
 
 	public void create() {
 		highScore = 0;
 		batch = new SpriteBatch();
-		font = new BitmapFont(); // usa Arial font x defecto
-		font.getData().setScale(2f);
+		assets = AssetLoader.getInstance();
+        assets.queueLoading();
+        
+        while (!assets.update()) {
+        	System.out.println("Loading: " + (int)(assets.getProgress() * 100) + "%");
+        }
+        
 		Screen ss = new MenuScreen(this);
 		this.setScreen(ss);
 	}
@@ -30,15 +35,11 @@ public class SpaceNavigation extends Game {
 
 	public void dispose() {
 		batch.dispose();
-		font.dispose();
+		assets.dispose();
 	}
 
 	public SpriteBatch getBatch() {
 		return batch;
-	}
-
-	public BitmapFont getFont() {
-		return font;
 	}
 
 	public int getHighScore() {

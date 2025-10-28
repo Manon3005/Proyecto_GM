@@ -4,18 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import spacenav.code.SpaceNavigation;
+import spacenav.code.utils.AssetLoader;
 
 
 public class GameOverScreen implements Screen {
 
 	private SpaceNavigation game;
 	private OrthographicCamera camera;
+	private BitmapFont defaultFont;
 
 	public GameOverScreen(SpaceNavigation game) {
 		this.game = game;
+		
+		AssetLoader assets = AssetLoader.getInstance();
+		defaultFont = assets.get(AssetLoader.DEFAULT_FONT, BitmapFont.class);
         
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1200, 800);
@@ -29,8 +35,8 @@ public class GameOverScreen implements Screen {
 		game.getBatch().setProjectionMatrix(camera.combined);
 
 		game.getBatch().begin();
-		game.getFont().draw(game.getBatch(), "Game Over !!! ", 120, 400,400,1,true);
-		game.getFont().draw(game.getBatch(), "Pincha en cualquier lado para reiniciar ...", 100, 300);
+		defaultFont.draw(game.getBatch(), "Game Over !!! ", 120, 400,400,1,true);
+		defaultFont.draw(game.getBatch(), "Pincha en cualquier lado para reiniciar ...", 100, 300);
 	
 		game.getBatch().end();
 

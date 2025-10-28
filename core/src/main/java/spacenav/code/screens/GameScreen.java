@@ -10,16 +10,19 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import spacenav.code.SpaceNavigation;
 import spacenav.code.domain.Asteroid;
 import spacenav.code.domain.Bullet;
 import spacenav.code.domain.Spaceship;
+import spacenav.code.utils.AssetLoader;
 
 public class GameScreen implements Screen {
 
     private SpaceNavigation game;
+    private BitmapFont defaultFont;
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Sound explosionSound;
@@ -32,11 +35,11 @@ public class GameScreen implements Screen {
     private int speedYAsteroids;
     private int nbAsteroids;
 
-    private Spaceship nave;
+    private Spaceship spaceship;
     private ArrayList<Asteroid> asteroids = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
 
-    public GameScreen(SpaceNavigation game, int round, int vidas, int score,
+    public GameScreen(SpaceNavigation game, int round, int lives, int score,
                       int speedXAsteroids, int speedYAsteroids, int nbAsteroids) {
         this.game = game;
         this.round = round;
@@ -44,31 +47,30 @@ public class GameScreen implements Screen {
         this.speedXAsteroids = speedXAsteroids;
         this.speedYAsteroids = speedYAsteroids;
         this.nbAsteroids = nbAsteroids;
-
+        
         batch = game.getBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 640);
         
-        // textures
-        bulletTx = new Texture(Gdx.files.internal("Rocket2.png"));
-
-        // music and sounds
-        bulletSound = Gdx.audio.newSound(Gdx.files.internal("pop-sound.mp3"));
-        explosionSound = Gdx.audio.newSound(Gdx.files.internal("explosion.ogg"));
+        AssetLoader assets = AssetLoader.getInstance();
+		defaultFont = assets.get(AssetLoader.DEFAULT_FONT, BitmapFont.class);
+        bulletTx = assets.get(AssetLoader.BULLET_TEXTURE, Texture.class);
+        bulletSound = assets.get(AssetLoader.BULLET_SOUND, Sound.class);
+        explosionSound = assets.get(AssetLoader.EXPLOSION_SOUND, Sound.class);
         explosionSound.setVolume(1, 0.5f);
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("piano-loops.wav"));
+        gameMusic = assets.get(AssetLoader.GAME_MUSIC, Music.class);
         gameMusic.setLooping(true);
         gameMusic.setVolume(0.5f);
         gameMusic.play();
 
         // spaceship creation
-        nave = new Spaceship(
+        spaceship = new Spaceship(
             Gdx.graphics.getWidth() / 2 - 50,
             30,
-            new Texture(Gdx.files.internal("MainShip3.png")),
-            Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"))
+            assets.get(AssetLoader.SHIP_TEXTURE, Texture.class),
+            assets.get(AssetLoader.HURT_SOUND, Sound.class)
         );
-        nave.setLives(vidas);
+        spaceship.setLives(lives);
 
         // asteroids creation
         Random r = new Random();
@@ -79,18 +81,17 @@ public class GameScreen implements Screen {
                 20 + r.nextInt(10),
                 speedXAsteroids + r.nextInt(4),
                 speedYAsteroids + r.nextInt(4),
-                new Texture(Gdx.files.internal("aGreyMedium4.png"))
+                assets.get(AssetLoader.ASTEROID_TEXTURE, Texture.class)
             );
             asteroids.add(a);
         }
     }
 
     public void drawHeader() {
-        CharSequence str = "Lives: " + nave.getLives() + " Round: " + round;
-        game.getFont().getData().setScale(2f);
-        game.getFont().draw(batch, str, 10, 30);
-        game.getFont().draw(batch, "Score:" + score, Gdx.graphics.getWidth() - 150, 30);
-        game.getFont().draw(batch, "HighScore:" + game.getHighScore(), Gdx.graphics.getWidth() / 2 - 100, 30);
+        CharSequence str = "Lives: " + spaceship.getLives() + " Round: " + round;
+        defaultFont.draw(batch, str, 10, 30);
+        defaultFont.draw(batch, "Score:" + score, Gdx.graphics.getWidth() - 150, 30);
+        defaultFont.draw(batch, "HighScore:" + game.getHighScore(), Gdx.graphics.getWidth() / 2 - 100, 30);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class GameScreen implements Screen {
 
         drawHeader();
 
-        if (!nave.isHurt()) {
+        if (!spaceship.isHurt()) {
             // collisions between bullets and asteroids
             for (int i = 0; i < bullets.size(); i++) {
                 Bullet b = bullets.get(i);
@@ -143,13 +144,13 @@ public class GameScreen implements Screen {
         }
 
         // draw spaceship
-        nave.draw(batch);
+        spaceship.draw(batch);
         
-        if (nave.wasBulletSent()) {
-        	Bullet bullet = new Bullet(nave.getX()+nave.getWidth()/2-5,nave.getY()+ nave.getHeight()-5,0,3, bulletTx);
+        if (spaceship.wasBulletSent()) {
+        	Bullet bullet = new Bullet(spaceship.getX()+spaceship.getWidth()/2-5,spaceship.getY()+ spaceship.getHeight()-5,0,3, bulletTx);
         	addBullet(bullet);
   	      	bulletSound.play();
-  	      	nave.setBulletSent();
+  	      	spaceship.setBulletSent();
         }
 
         // draw asteroids and check collision with the spaceship
@@ -157,16 +158,16 @@ public class GameScreen implements Screen {
             Asteroid a = asteroids.get(i);
             a.draw(batch);
 
-            if (nave.checkCollision(a)) {
-            	nave.doBounce(a);
-            	nave.hurt();
+            if (spaceship.checkCollision(a)) {
+            	spaceship.doBounce(a);
+            	spaceship.hurt();
                 asteroids.remove(i);
                 i--;
             }
         }
 
         // end of game handling
-        if (nave.isDestroyed()) {
+        if (spaceship.isDestroyed()) {
             if (score > game.getHighScore())
                 game.setHighScore(score);
             Screen ss = new GameOverScreen(game);
@@ -182,7 +183,7 @@ public class GameScreen implements Screen {
             Screen ss = new GameScreen(
                 game,
                 round + 1,
-                nave.getLives(),
+                spaceship.getLives(),
                 score,
                 speedXAsteroids + 3,
                 speedYAsteroids + 3,
