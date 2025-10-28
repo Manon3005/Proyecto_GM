@@ -21,34 +21,20 @@ public class Spaceship extends Entity {
     	super(x, y, 0, 0, tx);
     	this.hurtSound = hurtSound;
     	sprite.setBounds(x, y, 45, 45);
+    	sprite.setOriginCenter();
     }
     
     @Override
     public void draw(SpriteBatch batch){
         float x =  sprite.getX();
         float y =  sprite.getY();
+        
         if (!hurt) {
 	        // keyboard moving
 	        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) xSpeed--;
 	        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) xSpeed++;
         	if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) ySpeed--;     
 	        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) ySpeed++;
-        	
-	        /*   
-	        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) sprite.setRotation(++rotacion);
-	        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sprite.setRotation(--rotacion);
-	        
-	        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-	        	xVel -=Math.sin(Math.toRadians(rotacion));
-	        	yVel +=Math.cos(Math.toRadians(rotacion));
-	        	System.out.println(rotacion+" - "+Math.sin(Math.toRadians(rotacion))+" - "+Math.cos(Math.toRadians(rotacion))) ;    
-	        }
-	        if (Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-	        	xVel +=Math.sin(Math.toRadians(rotacion));
-	        	yVel -=Math.cos(Math.toRadians(rotacion));
-	        	     
-	        }
-	        */
 	        
 	        // stay inside the borders of the window
 	        if (x+xSpeed < 0 || x+xSpeed+sprite.getWidth() > Gdx.graphics.getWidth())
@@ -56,7 +42,16 @@ public class Spaceship extends Entity {
 	        if (y+ySpeed < 0 || y+ySpeed+sprite.getHeight() > Gdx.graphics.getHeight())
 	        	ySpeed*=-1;
 	        
-	        sprite.setPosition(x+xSpeed, y+ySpeed);   
+	        sprite.setPosition(x+xSpeed, y+ySpeed);
+	        
+	        // mouse orientation
+	        float centerX = sprite.getX() + sprite.getWidth() / 2f;
+	        float centerY = sprite.getY() + sprite.getHeight() / 2f;
+	        float xInput = Gdx.input.getX();
+	        float yInput = Gdx.graphics.getHeight() - Gdx.input.getY();
+	        float angle = MathUtils.radiansToDegrees * MathUtils.atan2(yInput - centerY, xInput - centerX) - 90f;
+	        if (angle < 0) angle += 360f;
+	        sprite.setRotation(angle);
          
  		    sprite.draw(batch);
         } else {
@@ -67,7 +62,7 @@ public class Spaceship extends Entity {
  		   if (hurtTime <= 0) hurt = false;
  		 }
         
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) { 
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) { 
         	this.wasBulletSent = true;
         }
     }
@@ -115,5 +110,6 @@ public class Spaceship extends Entity {
     public int getY() {return (int) sprite.getY();}
     public float getWidth() {return sprite.getWidth();};
     public float getHeight() {return sprite.getHeight();};
+    public float getRotation() {return sprite.getRotation();};
 	public void setLives(int lives2) {lives = lives2;}
 }

@@ -9,8 +9,10 @@ public class Bullet extends Entity {
 
 	private boolean destroyed = false;
 	    
-	    public Bullet(float x, float y, int xSpeed, int ySpeed, Texture tx) {
+	    public Bullet(float x, float y, int xSpeed, int ySpeed, Texture tx, float angleDeg) {
 	    	super(x, y, xSpeed, ySpeed, tx);
+	    	sprite.setOriginCenter();
+	    	sprite.setRotation(angleDeg);
 	    }
 	    
 	    public void update() {

@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 
 import spacenav.code.SpaceNavigation;
 import spacenav.code.domain.Asteroid;
@@ -34,19 +35,21 @@ public class GameScreen implements Screen {
     private int speedXAsteroids;
     private int speedYAsteroids;
     private int nbAsteroids;
+    private float bulletSpeed; 
 
     private Spaceship spaceship;
     private ArrayList<Asteroid> asteroids = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
 
     public GameScreen(SpaceNavigation game, int round, int lives, int score,
-                      int speedXAsteroids, int speedYAsteroids, int nbAsteroids) {
+                      int speedXAsteroids, int speedYAsteroids, int nbAsteroids, float bulletSpeed) {
         this.game = game;
         this.round = round;
         this.score = score;
         this.speedXAsteroids = speedXAsteroids;
         this.speedYAsteroids = speedYAsteroids;
         this.nbAsteroids = nbAsteroids;
+        this.bulletSpeed = bulletSpeed;
         
         batch = game.getBatch();
         camera = new OrthographicCamera();
@@ -147,10 +150,31 @@ public class GameScreen implements Screen {
         spaceship.draw(batch);
         
         if (spaceship.wasBulletSent()) {
-        	Bullet bullet = new Bullet(spaceship.getX()+spaceship.getWidth()/2-5,spaceship.getY()+ spaceship.getHeight()-5,0,3, bulletTx);
-        	addBullet(bullet);
-  	      	bulletSound.play();
-  	      	spaceship.setBulletSent();
+            float angleDeg = spaceship.getRotation();
+            float angleRad = (float) Math.toRadians(angleDeg + 90f);
+
+            float bulletXSpeed = MathUtils.cos(angleRad) * bulletSpeed;
+            float bulletYSpeed = MathUtils.sin(angleRad) * bulletSpeed;
+
+            float startX = spaceship.getX() + spaceship.getWidth() / 2f;
+            float startY = spaceship.getY() + spaceship.getHeight() / 2f;
+
+            float offset = spaceship.getHeight() / 2f;
+            startX += MathUtils.cos(angleRad) * offset;
+            startY += MathUtils.sin(angleRad) * offset;
+
+            Bullet bullet = new Bullet(
+                startX,
+                startY,
+                (int) bulletXSpeed,
+                (int) bulletYSpeed,
+                bulletTx,
+                angleDeg
+            );
+
+            addBullet(bullet);
+            bulletSound.play();
+            spaceship.setBulletSent();
         }
 
         // draw asteroids and check collision with the spaceship
@@ -187,7 +211,8 @@ public class GameScreen implements Screen {
                 score,
                 speedXAsteroids + 3,
                 speedYAsteroids + 3,
-                nbAsteroids + 10
+                nbAsteroids + 10,
+                3f
             );
             ss.resize(1200, 800);
             game.setScreen(ss);
