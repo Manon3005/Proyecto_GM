@@ -98,4 +98,5 @@ public class Asteroid extends Entity implements Damageable {
     
     public int getX() { return x; }
     public int getY() { return y; }
-    publi
+    public int getSize() { return size;}
+}

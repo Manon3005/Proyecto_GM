@@ -1,4 +1,4 @@
-ppackage spacenav.code.domain;
+package spacenav.code.domain;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import spacenav.code.interfaces.Damageable;
 
-public class Spaceship extends Entity implements Damageable{
+public class Spaceship extends Entity implements Damageable {
 	
 	    private boolean destroyed = false;
 	    private int lives = 3;
@@ -104,10 +104,6 @@ public class Spaceship extends Entity implements Damageable{
 	        if (lives <= 0) {
 	            destroyed = true;
 	        }
-	    }
-
-	    public void hurt() {
-	        takeDamage(1);
 	    }
 
 	    public void doBounce(Asteroid a) {

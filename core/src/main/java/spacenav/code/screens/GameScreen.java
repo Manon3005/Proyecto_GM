@@ -2,8 +2,7 @@ package spacenav.code.screens;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.ArrayList;
-import java.util.Random;
+
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,13 +14,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.GdxRuntimeException;   // <-- IMPORT NECESARIO
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import spacenav.code.SpaceNavigation;
 import spacenav.code.domain.Asteroid;
 import spacenav.code.domain.Bullet;
-import spacenav.code.domain.PowerUp;                // <-- IMPORT NECESARIO
-import spacenav.code.domain.PowerUpType;           // <-- IMPORT NECESARIO
+import spacenav.code.domain.PowerUp;
+import spacenav.code.domain.PowerUpType;
 import spacenav.code.domain.Spaceship;
 import spacenav.code.utils.AssetLoader;
 
@@ -222,7 +221,7 @@ public class GameScreen implements Screen {
 
             if (spaceship.checkCollision(a)) {
                 spaceship.doBounce(a);
-                spaceship.hurt();
+                spaceship.takeDamage(1);
                 asteroids.remove(i);
                 i--;
             }
