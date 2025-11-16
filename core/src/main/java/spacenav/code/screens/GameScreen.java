@@ -14,13 +14,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import spacenav.code.SpaceNavigation;
 import spacenav.code.domain.Asteroid;
 import spacenav.code.domain.Bullet;
 import spacenav.code.domain.PowerUp;
-import spacenav.code.domain.PowerUpType;
+import spacenav.code.domain.PowerUpFactory;
 import spacenav.code.domain.Spaceship;
 import spacenav.code.utils.AssetLoader;
 
@@ -44,12 +43,7 @@ public class GameScreen implements Screen {
 
     // Power-ups
     private ArrayList<PowerUp> powerUps = new ArrayList<>();
-    private Texture puExtraLifeTx;
-    private Texture puShieldTx;
-
-    private final float DROP_CHANCE = 0.50f;  // probabilidad de drop por asteroide
-    private final float SHIELD_DURATION = 5f; // segundos
-    private final float POWERUP_SIZE = 28f;
+    private final float DROP_CHANCE = 0.30f;  // probabilidad de drop por asteroide
 
     private Spaceship spaceship;
     private ArrayList<Asteroid> asteroids = new ArrayList<>();
@@ -79,12 +73,6 @@ public class GameScreen implements Screen {
         gameMusic.setLooping(true);
         gameMusic.setVolume(0.5f);
         gameMusic.play();
-
-        // Cargar texturas de powerups (fallback si no existen en assets)
-        try { puExtraLifeTx = assets.get("powerups/extra_life.png", Texture.class); }
-        catch (GdxRuntimeException e) { puExtraLifeTx = bulletTx; }
-        try { puShieldTx = assets.get("powerups/shield.png", Texture.class); }
-        catch (GdxRuntimeException e) { puShieldTx = bulletTx; }
 
         // spaceship creation
         spaceship = new Spaceship(
@@ -154,18 +142,8 @@ public class GameScreen implements Screen {
 
                             // Chance de drop
                             if (Math.random() < DROP_CHANCE) {
-                                PowerUpType type;
-                                double roll = Math.random(); // 70% vida, 30% escudo
-                                if (roll < 0.70) type = PowerUpType.EXTRA_LIFE;
-                                else             type = PowerUpType.SHIELD;
-
-                                Texture tx = (type == PowerUpType.EXTRA_LIFE) ? puExtraLifeTx : puShieldTx;
-
-                                float dropX = a.getX() + a.getSize()/2f - POWERUP_SIZE/2f;
-                                float dropY = a.getY() + a.getSize()/2f - POWERUP_SIZE/2f;
-
-                                PowerUp pu = new PowerUp(dropX, dropY, POWERUP_SIZE, tx, type);
-                                powerUps.add(pu);
+                                PowerUp p = PowerUpFactory.createRandom(a.getX() + a.getSize()/2f, a.getY() + a.getSize()/2f);
+                                powerUps.add(p);
                             }
 
                             asteroids.remove(j);
@@ -233,12 +211,12 @@ public class GameScreen implements Screen {
             pu.update(delta);
             pu.draw(batch);
         }
+        
         // recoger powerups
         for (int k = 0; k < powerUps.size(); k++) {
             PowerUp pu = powerUps.get(k);
             if (!pu.isCollected() && spaceship.checkCollision(pu)) {
-                applyPowerUp(pu.getType());
-                pu.collect();
+                pu.applyTo(spaceship);
                 powerUps.remove(k);
                 k--;
             }
@@ -270,14 +248,6 @@ public class GameScreen implements Screen {
             ss.resize(1200, 800);
             game.setScreen(ss);
             dispose();
-        }
-    }
-
-    private void applyPowerUp(PowerUpType type) {
-        if (type == PowerUpType.EXTRA_LIFE) {
-            spaceship.setLives(spaceship.getLives() + 1);
-        } else {
-            spaceship.activateShield(SHIELD_DURATION);
         }
     }
 
