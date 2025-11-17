@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 
 public class AssetLoader implements Disposable {
@@ -25,6 +26,7 @@ public class AssetLoader implements Disposable {
     public static final String ASTEROID_TEXTURE = "texture/aGreyMedium4.png";
     public static final String EXTRA_LIFE_POWERUP_TEXTURE = "texture/heart.png";
     public static final String SHIELD_POWERUP_TEXTURE = "texture/shield4.png";
+    public static final String BUTTON_SKIN = "skin/star-soldier/star-soldier-ui.json";
 
     private AssetLoader() {
         assetManager = new AssetManager();
@@ -53,6 +55,8 @@ public class AssetLoader implements Disposable {
         assetManager.load(ASTEROID_TEXTURE, Texture.class);
         assetManager.load(EXTRA_LIFE_POWERUP_TEXTURE, Texture.class);
         assetManager.load(SHIELD_POWERUP_TEXTURE, Texture.class);
+        
+        assetManager.load(BUTTON_SKIN, Skin.class);
     }
 
     public boolean update() {
