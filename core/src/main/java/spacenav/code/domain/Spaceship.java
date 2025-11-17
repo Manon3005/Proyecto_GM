@@ -17,6 +17,9 @@ public class Spaceship extends Entity implements Damageable {
 	    private int hurtTime;
 	    private Sound hurtSound;
 	    private boolean wasBulletSent = false;
+	    
+	    private float speed = 4f;  
+	    private boolean moving = false;
 
 	    // Escudo
 	    private boolean shielded = false;
@@ -41,24 +44,42 @@ public class Spaceship extends Entity implements Damageable {
 
 	        float x = sprite.getX();
 	        float y = sprite.getY();
-
+	        
 	        if (!hurt) {
-	            // keyboard moving
-	        	
-	            if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT))  xSpeed--;
-	            if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) xSpeed++;
-	            if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN))  ySpeed--;
-	            if (Gdx.input.isKeyJustPressed(Input.Keys.UP))    ySpeed++;
 
-	            // stay inside the borders of the window
-	            if (x + xSpeed < 0 || x + xSpeed + sprite.getWidth() > Gdx.graphics.getWidth())
-	                xSpeed *= -1;
-	            if (y + ySpeed < 0 || y + ySpeed + sprite.getHeight() > Gdx.graphics.getHeight())
-	                ySpeed *= -1;
+	            if (!moving) {
+	                if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT) ||
+	                    Gdx.input.isKeyJustPressed(Input.Keys.RIGHT) ||
+	                    Gdx.input.isKeyJustPressed(Input.Keys.UP) ||
+	                    Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+	                    moving = true;
+	                }
+	            }
 
-	            sprite.setPosition(x + xSpeed, y + ySpeed);
+	            xSpeed = 0;
+	            ySpeed = 0;
 
-	            // mouse orientation
+	            if (moving) {
+	                if (Gdx.input.isKeyPressed(Input.Keys.LEFT))  xSpeed = -speed;
+	                if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) xSpeed = speed;
+	                if (Gdx.input.isKeyPressed(Input.Keys.UP))    ySpeed = speed;
+	                if (Gdx.input.isKeyPressed(Input.Keys.DOWN))  ySpeed = -speed;
+	            }
+
+	            float nextX = x + xSpeed;
+	            float nextY = y + ySpeed;
+
+	            if (nextX < 0) nextX = 0;
+	            if (nextX + sprite.getWidth() > Gdx.graphics.getWidth())
+	                nextX = Gdx.graphics.getWidth() - sprite.getWidth();
+
+	            if (nextY < 0) nextY = 0;
+	            if (nextY + sprite.getHeight() > Gdx.graphics.getHeight())
+	                nextY = Gdx.graphics.getHeight() - sprite.getHeight();
+
+	            sprite.setPosition(nextX, nextY);
+	            
+	         // mouse orientation
 	            float centerX = sprite.getX() + sprite.getWidth() / 2f;
 	            float centerY = sprite.getY() + sprite.getHeight() / 2f;
 	            float xInput = Gdx.input.getX();
@@ -67,9 +88,10 @@ public class Spaceship extends Entity implements Damageable {
 	            if (angle < 0) angle += 360f;
 	            sprite.setRotation(angle);
 
-	            // tinte visual si hay escudo
-	            if (shielded) sprite.setColor(0.7f, 0.85f, 1f, 1f); else sprite.setColor(1f, 1f, 1f, 1f);
-	            sprite.draw(batch);
+	            if (shielded) sprite.setColor(0.7f, 0.85f, 1f, 1f);
+	            else sprite.setColor(1f, 1f, 1f, 1f);
+	            
+	            sprite.draw(batch);     
 	        } else {
 	            // feedback de daño (temblor)
 	            sprite.setX(sprite.getX() + MathUtils.random(-2, 2));
