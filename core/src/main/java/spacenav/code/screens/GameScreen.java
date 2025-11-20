@@ -1,7 +1,6 @@
 
 package spacenav.code.screens;
 
-import spacenav.code.domain.DifficultyStrategy;
 import spacenav.code.domain.LevelParams;
 import spacenav.code.domain.NormalDifficultyStrategy; 
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import spacenav.code.domain.Bullet;
 import spacenav.code.domain.PowerUp;
 import spacenav.code.domain.PowerUpFactory;
 import spacenav.code.domain.Spaceship;
+import spacenav.code.interfaces.DifficultyStrategy;
 import spacenav.code.utils.AssetLoader;
 
 public class GameScreen implements Screen {

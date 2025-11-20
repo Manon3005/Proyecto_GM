@@ -1,5 +1,7 @@
 package spacenav.code.domain;
 
+import spacenav.code.interfaces.DifficultyStrategy;
+
 public class EasyDifficultyStrategy implements DifficultyStrategy {
 	
 	 @Override

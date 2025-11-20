@@ -14,10 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import spacenav.code.SpaceNavigation;
-import spacenav.code.domain.DifficultyStrategy;
 import spacenav.code.domain.EasyDifficultyStrategy;
 import spacenav.code.domain.HardDifficultyStrategy;
 import spacenav.code.domain.NormalDifficultyStrategy;
+import spacenav.code.interfaces.DifficultyStrategy;
 import spacenav.code.utils.AssetLoader;
 
 

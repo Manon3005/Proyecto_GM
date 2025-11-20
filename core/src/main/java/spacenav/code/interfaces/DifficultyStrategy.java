@@ -1,4 +1,6 @@
-package spacenav.code.domain;
+package spacenav.code.interfaces;
+
+import spacenav.code.domain.LevelParams;
 
 public interface DifficultyStrategy {
 	/**
