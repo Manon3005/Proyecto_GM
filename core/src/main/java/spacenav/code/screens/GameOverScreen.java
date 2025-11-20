@@ -53,10 +53,10 @@ public class GameOverScreen implements Screen {
 		game.getBatch().end();
 
 		if (Gdx.input.isTouched() || Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-			Screen ss = new GameScreen(game,1,3,0,1,1,10,3f);
-			ss.resize(1200, 800);
-			game.setScreen(ss);
-			dispose();
+			Screen menu = new MenuScreen(game);
+	        menu.resize(1200, 800);
+	        game.setScreen(menu);
+	        dispose();
 		}
 	}
  
