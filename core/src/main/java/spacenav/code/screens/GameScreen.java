@@ -1,9 +1,11 @@
+
 package spacenav.code.screens;
 
+import spacenav.code.domain.DifficultyStrategy;
+import spacenav.code.domain.LevelParams;
+import spacenav.code.domain.NormalDifficultyStrategy; 
 import java.util.ArrayList;
 import java.util.Random;
-
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -24,6 +26,8 @@ import spacenav.code.domain.Spaceship;
 import spacenav.code.utils.AssetLoader;
 
 public class GameScreen implements Screen {
+	
+	private DifficultyStrategy difficultyStrategy;
 
     private SpaceNavigation game;
     private BitmapFont defaultFont;
@@ -58,7 +62,13 @@ public class GameScreen implements Screen {
         this.speedYAsteroids = speedYAsteroids;
         this.nbAsteroids = nbAsteroids;
         this.bulletSpeed = bulletSpeed;
-
+        
+        this.difficultyStrategy = game.getDifficultyStrategy();
+        if (this.difficultyStrategy == null) {
+            // por seguridad, si no se configuró, usamos Normal por defecto
+            this.difficultyStrategy = new NormalDifficultyStrategy();
+        }
+     
         batch = game.getBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 640);
@@ -234,16 +244,23 @@ public class GameScreen implements Screen {
         batch.end();
 
         // next level
-        if (asteroids.isEmpty()) {
-            Screen ss = new GameScreen(
-                game,
-                round + 1,
-                spaceship.getLives(),
-                score,
-                speedXAsteroids + 1,
-                speedYAsteroids + 1,
-                nbAsteroids + 5,
-                3f
+        if (asteroids.isEmpty() && !spaceship.isDestroyed()) {
+        	 
+        	LevelParams lp = difficultyStrategy.next(
+                     round,
+                     speedXAsteroids,
+                     speedYAsteroids,
+                     nbAsteroids
+             );
+        	Screen ss = new GameScreen(
+                    game,
+                    round + 1,
+                    spaceship.getLives(),
+                    score,
+                    lp.speedXAsteroids,
+                    lp.speedYAsteroids,
+                    lp.nAsteroids,
+                    bulletSpeed
             );
             ss.resize(1200, 800);
             game.setScreen(ss);
