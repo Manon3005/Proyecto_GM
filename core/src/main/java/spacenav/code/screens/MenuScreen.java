@@ -99,9 +99,9 @@ public class MenuScreen implements Screen {
 	    float yTitle = 700;
 	    titleFont.draw(game.getBatch(), layout, xTitle, yTitle);
 
-	    layout.setText(defaultFont, "Haz clic en el boton para comenzar una partida!");
+	    layout.setText(defaultFont, "Haz clic en un boton para comenzar una partida!");
 	    float xSub = (1200 - layout.width) / 2f;
-	    float ySub = 300;
+	    float ySub = 250;
 
 	    defaultFont.draw(game.getBatch(), layout, xSub, ySub);
 	    game.getBatch().end();
@@ -143,7 +143,6 @@ public class MenuScreen implements Screen {
 	@Override
 	public void dispose() {
 		stage.dispose();
-	    
 	}
    
 }

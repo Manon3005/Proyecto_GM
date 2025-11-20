@@ -10,5 +10,5 @@ public interface DifficultyStrategy {
      * @param baseCount      cantidad actual de asteroides
      * @return parámetros del siguiente nivel
      */
-	 LevelParams next(int currentRound, int baseSpeedX, int baseSpeedY, int baseCount);
+	LevelParams next(int currentRound, int baseSpeedX, int baseSpeedY, int baseCount);
 }
