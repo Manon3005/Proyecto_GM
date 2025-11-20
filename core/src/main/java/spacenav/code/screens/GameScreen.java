@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
         }
     }
 
-    public void drawHeader() {
+    private void drawHeader() {
         CharSequence str = "Lives: " + spaceship.getLives() + "  Round: " + round;
         defaultFont.draw(batch, str, 10, 30);
         defaultFont.draw(batch, "Score: " + score, Gdx.graphics.getWidth() - 180, 30);
@@ -294,7 +294,7 @@ public class GameScreen implements Screen {
         addBullet(bullet);
     }
 
-    public boolean addBullet(Bullet bb) { return bullets.add(bb); }
+    private boolean addBullet(Bullet bb) { return bullets.add(bb); }
 
     @Override public void show() { gameMusic.play(); }
     @Override public void resize(int width, int height) {}

@@ -123,6 +123,11 @@ public class MenuScreen implements Screen {
 	}
 
 	@Override
+	public void dispose() {
+		stage.dispose();
+	}
+
+	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
 		
@@ -138,11 +143,6 @@ public class MenuScreen implements Screen {
 	public void hide() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void dispose() {
-		stage.dispose();
 	}
    
 }
