@@ -92,7 +92,7 @@ public class GameOverScreen implements Screen {
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ANY_KEY)) {
-        	Screen ss = new GameScreen(game,1,3,0,1,1,10,3f);
+        	Screen ss = new GameScreen(game,0,3,0);
 			ss.resize(1200, 800);
 			game.setScreen(ss);
 			dispose();

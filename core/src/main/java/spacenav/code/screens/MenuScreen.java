@@ -81,7 +81,7 @@ public class MenuScreen implements Screen {
 	
 	private void start(DifficultyStrategy e) {
         game.setDifficultyStrategy(e);
-        game.setScreen(new GameScreen(game, 1, 3, 0, 1, 1, 5, 4f));
+        game.setScreen(new GameScreen(game, 0, 3, 0));
     }
 
 	@Override

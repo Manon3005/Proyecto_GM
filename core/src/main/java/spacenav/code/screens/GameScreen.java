@@ -2,7 +2,6 @@
 package spacenav.code.screens;
 
 import spacenav.code.domain.LevelParams;
-import spacenav.code.domain.NormalDifficultyStrategy; 
 import java.util.ArrayList;
 import java.util.Random;
 import com.badlogic.gdx.Gdx;
@@ -43,7 +42,7 @@ public class GameScreen implements Screen {
     private int speedXAsteroids;
     private int speedYAsteroids;
     private int nbAsteroids;
-    private float bulletSpeed;
+    private final float bulletSpeed = 4f;
 
     // Power-ups
     private ArrayList<PowerUp> powerUps = new ArrayList<>();
@@ -53,22 +52,19 @@ public class GameScreen implements Screen {
     private ArrayList<Asteroid> asteroids = new ArrayList<>();
     private ArrayList<Bullet> bullets = new ArrayList<>();
 
-    public GameScreen(SpaceNavigation game, int round, int lives, int score,
-                      int speedXAsteroids, int speedYAsteroids, int nbAsteroids, float bulletSpeed) {
+    public GameScreen(SpaceNavigation game, int round, int lives, int score) {
         this.game = game;
         this.round = round;
         this.score = score;
-        this.speedXAsteroids = speedXAsteroids;
-        this.speedYAsteroids = speedYAsteroids;
-        this.nbAsteroids = nbAsteroids;
-        this.bulletSpeed = bulletSpeed;
         
         this.difficultyStrategy = game.getDifficultyStrategy();
-        if (this.difficultyStrategy == null) {
-            // por seguridad, si no se configuró, usamos Normal por defecto
-            this.difficultyStrategy = new NormalDifficultyStrategy();
-        }
-     
+        LevelParams lp = this.difficultyStrategy.next(round);
+        
+        
+        this.speedXAsteroids = lp.speedXAsteroids;
+        this.speedYAsteroids = lp.speedYAsteroids;
+        this.nbAsteroids = lp.nAsteroids;
+        
         batch = game.getBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 640);
@@ -95,7 +91,7 @@ public class GameScreen implements Screen {
 
         // asteroids creation (tamaños variables)
         Random r = new Random();
-        for (int i = 0; i < nbAsteroids; i++) {
+        while (asteroids.size() < nbAsteroids) {
             int size = 20 + r.nextInt(30); // 20..50
             int sx = speedXAsteroids + r.nextInt(4);
             int sy = speedYAsteroids + r.nextInt(4);
@@ -108,12 +104,21 @@ public class GameScreen implements Screen {
                 sy,
                 assets.get(AssetLoader.ASTEROID_TEXTURE, Texture.class)
             );
-            asteroids.add(a);
+            
+            boolean existCollision = false;
+            for (int j = 0; j < asteroids.size(); j++) {
+            	if (a.checkCollision(asteroids.get(j))) {
+            		existCollision = true;
+            	}
+            }
+            if (!existCollision) {
+            	asteroids.add(a);
+            }
         }
     }
 
     private void drawHeader() {
-        CharSequence str = "Lives: " + spaceship.getLives() + "  Round: " + round;
+        CharSequence str = "Lives: " + spaceship.getLives() + "  Round: " + (round + 1);
         defaultFont.draw(batch, str, 10, 30);
         defaultFont.draw(batch, "Score: " + score, Gdx.graphics.getWidth() - 180, 30);
         defaultFont.draw(batch, "HighScore: " + game.getHighScore(), Gdx.graphics.getWidth() / 2f - 100, 30);
@@ -244,23 +249,12 @@ public class GameScreen implements Screen {
         batch.end();
 
         // next level
-        if (asteroids.isEmpty() && !spaceship.isDestroyed()) {
-        	 
-        	LevelParams lp = difficultyStrategy.next(
-                     round,
-                     speedXAsteroids,
-                     speedYAsteroids,
-                     nbAsteroids
-             );
+        if (asteroids.isEmpty() && !spaceship.isDestroyed()) {       	
         	Screen ss = new GameScreen(
                     game,
                     round + 1,
                     spaceship.getLives(),
-                    score,
-                    lp.speedXAsteroids,
-                    lp.speedYAsteroids,
-                    lp.nAsteroids,
-                    bulletSpeed
+                    score
             );
             ss.resize(1200, 800);
             game.setScreen(ss);
