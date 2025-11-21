@@ -1,4 +1,6 @@
 package spacenav.code;
+import spacenav.code.domain.NormalDifficultyStrategy;
+import spacenav.code.interfaces.DifficultyStrategy;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
@@ -14,6 +16,7 @@ public class SpaceNavigation extends Game {
 	private SpriteBatch batch;
 	private int highScore;	
 	private AssetLoader assets;
+	private DifficultyStrategy difficultyStrategy = new NormalDifficultyStrategy();
 
 	public void create() {
 		highScore = 0;
@@ -50,6 +53,13 @@ public class SpaceNavigation extends Game {
 		this.highScore = highScore;
 	}
 	
-	
+    public DifficultyStrategy getDifficultyStrategy() {
+        return difficultyStrategy;
+    }
+
+    public void setDifficultyStrategy(DifficultyStrategy difficultyStrategy) {
+        this.difficultyStrategy = difficultyStrategy;
+        
+    }
 
 }
